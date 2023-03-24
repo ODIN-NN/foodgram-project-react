@@ -18,7 +18,7 @@ services:
     env_file:
       - .env
     restart: always
-    container_name: backend_foodgram
+    container_name: foodgram_backend
 
   frontend:
     image: odin11nn/foodgram_frontend
