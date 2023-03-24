@@ -10,4 +10,5 @@ class UserAdmin(admin.ModelAdmin):
     ordering = ('username', )
     empty_value_display = '-пусто-'
 
+
 admin.site.register(User, UserAdmin)

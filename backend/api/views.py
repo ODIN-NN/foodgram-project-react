@@ -3,22 +3,37 @@ from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (FavoriteRecipes, Ingredient,
-                            QuantityIngredient, Recipe, Cart, Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import (IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
 from rest_framework.response import Response
+
+from recipes.models import (
+    Cart,
+    FavoriteRecipes,
+    Ingredient,
+    QuantityIngredient,
+    Recipe,
+    Tag,
+)
 from users.models import Follow, User
 
 from .filters import IngredientFilter, RecipeFilter
 from .pagination import CustomPagination
 from .permissions import CheckAuthorPermission
-from .serializers import (CreateRecipeSerializer, FavoriteRecipesSerializer,
-                          IngredientSerializer, ReadRecipeSerializer,
-                          CartSerializer, SubscribeListSerializer,
-                          TagSerializer, UserSerializer)
+from .serializers import (
+    CartSerializer,
+    CreateRecipeSerializer,
+    FavoriteRecipesSerializer,
+    IngredientSerializer,
+    ReadRecipeSerializer,
+    SubscribeListSerializer,
+    TagSerializer,
+    UserSerializer,
+)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -48,11 +63,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return ReadRecipeSerializer
-        else:
-            return CreateRecipeSerializer
+        return CreateRecipeSerializer
 
-    @staticmethod
-    def send_message(ingredients):
+    def generation_ingredients_file(self, ingredients):
         shopping_list = 'Купить:'
         for ingredient in ingredients:
             shopping_list = shopping_list + (
@@ -71,7 +84,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ).order_by('ingredient__name').values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(quantity=Sum('quantity'))
-        return self.send_message(ingredients)
+        return self.generation_ingredients_file(ingredients)
 
     @action(
         detail=True,
