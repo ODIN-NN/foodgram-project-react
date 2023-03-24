@@ -24,7 +24,7 @@ http://62.84.117.39/api/docs/
 
 Установка Docker-compose - https://docs.docker.com/compose/install/
 
-## Запуск и использование приложения
+## Запуск
 
 ### Запуск приложения
 
