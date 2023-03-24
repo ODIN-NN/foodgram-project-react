@@ -1,9 +1,13 @@
 ![Deploy badge](https://github.com/ODIN-NN/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg)
-# Yamdb_final (API для сервиса YaMDb в контейнерах)
+# FOODGRAM
 
 ## Адрес сайта
 
+http://62.84.117.39/
 
+## Документация API
+
+http://62.84.117.39/api/docs/
 
 ## Описание проекта
 
@@ -24,7 +28,7 @@
 
 ### Запуск приложения
 
-Из директории проекта (через консоль bash), выполните команду для запуска приложения:
+Из директории infra/ (через консоль bash), выполните команду для запуска приложения:
 
 ```
 docker-compose up --build
@@ -44,17 +48,16 @@ docker container ls
 docker exec -it <CONTAINER ID> sh
 ```
 
-Выполняем миграцию базы данных и сбор статики:
+Выполняем миграцию базы данных, сбор статики и загрузку начальных данных:
 
 ```
 python manage.py migrate
 
 python manage.py collectstatic
+
+python manage.py upload_csv
 ```
 
-### Использование приложения
-
-Инструкция по использованию доступна по адресу http://localhost/redoc/
 
 ## Технологии
 
