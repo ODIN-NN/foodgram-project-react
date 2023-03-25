@@ -64,9 +64,9 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd infra
-            sudo docker-compose stop
-            sudo docker-compose rm foodgram_frontend
-            sudo docker-compose rm foodgram_backend
+            sudo docker-compose down
+            sudo docker pull odin11nn/foodgram_frontend:latest
+            sudo docker pull odin11nn/foodgram_backend:latest
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
