@@ -1,22 +1,25 @@
-import csv
-import os
+import json
 
 from django.core.management.base import BaseCommand
 
-from backend.foodgram import settings
-from recipes.models import Ingredient
-
-
-def ingredient_create(row):
-    Ingredient.objects.get_or_create(name=row[0], measurement_unit=row[1])
+from recipes.models import Ingredient, Tag
 
 
 class Command(BaseCommand):
+    help = ' Загрузка ингредиентов '
+
     def handle(self, *args, **options):
-        path = os.path.join(settings.BASE_DIR, 'ingredients.csv')
-        with open(path, 'r', encoding='utf-8') as file:
-            reader = csv.reader(file)
-            next(reader)
-            for row in reader:
-                ingredient_create(row)
-        self.stdout.write("Ингредиенты загружены.")
+        self.stdout.write(self.style.WARNING('Старт загрузки'))
+        with open('data/ingredients.json', encoding='utf-8',
+                  ) as data_file_ingredients:
+            ingredient_data = json.loads(data_file_ingredients.read())
+            for ingredients in ingredient_data:
+                Ingredient.objects.get_or_create(**ingredients)
+
+        with open('data/tags.json', encoding='utf-8',
+                  ) as data_file_tags:
+            tags_data = json.loads(data_file_tags.read())
+            for tags in tags_data:
+                Tag.objects.get_or_create(**tags)
+
+        self.stdout.write(self.style.SUCCESS('Ингредиенты загружены'))
