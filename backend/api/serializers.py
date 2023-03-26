@@ -17,16 +17,16 @@ from users.models import User
 
 
 class UserSerializer(UserSerializer):
-    subscribe = SerializerMethodField(read_only=True)
+    is_subscribed = SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
         fields = (
             'email', 'id', 'username',
-            'first_name', 'last_name', 'subscribe',
+            'first_name', 'last_name', 'is_subscribed',
         )
 
-    def get_subscribe(self, obj):
+    def get_is_subscribed(self, obj):
         request = self.context.get('request')
         if request.user.is_anonymous:
             return False
@@ -107,7 +107,7 @@ class QuantityIngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuantityIngredient
-        fields = ('id', 'name', 'measurement_unit', 'quantity',)
+        fields = ('id', 'name', 'measurement_unit', 'amount',)
 
 
 class ReadRecipeSerializer(serializers.ModelSerializer):
@@ -123,15 +123,15 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         read_only=False,
         many=True,
     )
-    favorite = serializers.SerializerMethodField()
-    in_cart = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
     image = serializers.URLField()
 
     class Meta:
         model = Recipe
         fields = (
             'id', 'tags', 'author', 'ingredients',
-            'favorite', 'in_cart',
+            'is_favorited', 'is_in_shopping_cart',
             'name', 'image', 'text', 'cooking_time'
         )
 
@@ -139,13 +139,13 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         ingredients = QuantityIngredient.objects.filter(recipe=obj)
         return QuantityIngredientSerializer(ingredients, many=True).data
 
-    def get_favorite(self, obj):
+    def get_is_favorited(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
         return obj.favorites.filter(user=request.user).exists()
 
-    def get_in_cart(self, obj):
+    def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
@@ -190,9 +190,9 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             if ingredient['id'] in list_of_ingredients:
                 raise serializers.ValidationError(
-                    'Ингридиенты не должны повторяться')
+                    'Ингредиенты не должны повторяться')
             list_of_ingredients.append(ingredient['id'])
-            if int(ingredient.get('quantity')) < 1:
+            if int(ingredient.get('amount')) < 1:
                 raise serializers.ValidationError(
                     'Положите хоть немного этого ингредиента')
         return ingredients
@@ -204,7 +204,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             ingredient_list.append(
                 QuantityIngredient(
                     ingredients=ingredient.pop('id'),
-                    quantity=ingredient.pop('quantity'),
+                    amount=ingredient.pop('amount'),
                     recipe=recipe,
                 )
             )

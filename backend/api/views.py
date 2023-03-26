@@ -41,7 +41,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     permission_classes = (IsAuthenticatedOrReadOnly, )
     filter_backends = (IngredientFilter, )
-    search_fields = ('^name', )
+    search_fields = ('name', )
     pagination_class = None
 
 
@@ -71,7 +71,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             shopping_list = shopping_list + (
                 f"\n{ingredient['ingredient__name']} "
                 f"({ingredient['ingredient__measurement_unit']}) - "
-                f"{ingredient['quantity']}")
+                f"{ingredient['amount']}")
         file = 'shopping_list.txt'
         response = HttpResponse(shopping_list, content_type='text/plain')
         response['Content-Disposition'] = f'attachment; filename="{file}.txt"'
@@ -83,7 +83,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             recipe__shopping_list__user=request.user
         ).order_by('ingredient__name').values(
             'ingredient__name', 'ingredient__measurement_unit'
-        ).annotate(quantity=Sum('quantity'))
+        ).annotate(amount=Sum('amount'))
         return self.generation_ingredients_file(ingredients)
 
     @action(
