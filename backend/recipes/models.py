@@ -14,8 +14,7 @@ class Ingredient(models.Model):
     name = models.CharField(
         max_length=200,
         verbose_name='Название ингредиента',
-        db_index=True,
-        unique=True
+        db_index=True
     )
     measurement_unit = models.CharField(
         max_length=24,
@@ -25,6 +24,12 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиенты'
         verbose_name_plural = 'Ингредиенты'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'measurement_unit'],
+                name='unique_name_measurement_unit'
+            )
+        ]
 
     def __str__(self):
         return f'{self.name}, {self.measurement_unit}'
@@ -82,7 +87,7 @@ class Recipe(models.Model):
     text = models.TextField(verbose_name='Описание')
     ingredients = models.ManyToManyField(
         Ingredient,
-        verbose_name='Ингридиенты',
+        verbose_name='Ингредиенты',
         through='IngredientRecipe'
     )
     tags = models.ManyToManyField(
