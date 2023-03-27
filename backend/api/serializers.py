@@ -125,7 +125,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
     )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    image = serializers.URLField()
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
