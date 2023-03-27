@@ -134,7 +134,7 @@ class FavoriteShoppingCart(models.Model):
         constraints = [
             UniqueConstraint(
                 fields=('user', 'recipe'),
-                name='%(app_label)s_%(class)s_unique'
+                name='unique_recipe'
             )
         ]
 
