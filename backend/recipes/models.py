@@ -131,12 +131,6 @@ class FavoriteShoppingCart(models.Model):
 
     class Meta:
         abstract = True
-        constraints = [
-            UniqueConstraint(
-                fields=('user', 'recipe'),
-                name='unique_favorite_recipe'
-            )
-        ]
 
     def __str__(self):
         return f'{self.user} :: {self.recipe}'
@@ -148,6 +142,12 @@ class Favorite(FavoriteShoppingCart):
         default_related_name = 'favorites'
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
+        constraints = [
+            UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='unique_favorite_recipe'
+            )
+        ]
 
 
 class ShoppingCart(FavoriteShoppingCart):
@@ -156,6 +156,12 @@ class ShoppingCart(FavoriteShoppingCart):
         default_related_name = 'shopping_list'
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзина'
+        constraints = [
+            UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='unique_shoppingcart_recipe'
+            )
+        ]
 
 
 class IngredientRecipe(models.Model):
