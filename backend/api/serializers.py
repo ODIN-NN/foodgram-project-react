@@ -6,11 +6,11 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
 
 from recipes.models import (
-    Cart,
-    FavoriteRecipes,
+    Favorite,
     Ingredient,
-    QuantityIngredient,
+    IngredientRecipe,
     Recipe,
+    ShoppingCart,
     Tag,
 )
 from users.models import User
@@ -106,7 +106,7 @@ class QuantityIngredientSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = QuantityIngredient
+        model = IngredientRecipe
         fields = ('id', 'name', 'measurement_unit', 'amount',)
 
 
@@ -117,7 +117,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
     )
     ingredients = QuantityIngredientSerializer(
         many=True,
-        source='ingredient'
+        source='ingredienttorecipe'
     )
     tags = TagSerializer(
         read_only=False,
@@ -136,7 +136,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         )
 
     def get_ingredients(self, obj):
-        ingredients = QuantityIngredient.objects.filter(recipe=obj)
+        ingredients = IngredientRecipe.objects.filter(recipe=obj)
         return QuantityIngredientSerializer(ingredients, many=True).data
 
     def get_is_favorited(self, obj):
@@ -202,13 +202,13 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         ingredient_list = []
         for ingredient in ingredients:
             ingredient_list.append(
-                QuantityIngredient(
-                    ingredients=ingredient.pop('id'),
+                IngredientRecipe(
+                    ingredient=ingredient.pop('id'),
                     amount=ingredient.pop('amount'),
                     recipe=recipe,
                 )
             )
-        QuantityIngredient.objects.bulk_create(ingredient_list)
+        IngredientRecipe.objects.bulk_create(ingredient_list)
 
     def create(self, validated_data):
         request = self.context.get('request', None)
@@ -221,7 +221,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.tags.clear()
-        QuantityIngredient.objects.filter(recipe=instance).delete()
+        IngredientRecipe.objects.filter(recipe=instance).delete()
         instance.tags.set(validated_data.pop('tags'))
         ingredients = validated_data.pop('ingredients')
         self.create_ingredients(instance, ingredients)
@@ -243,7 +243,7 @@ class FieldsRecipeSerializer(serializers.ModelSerializer):
 class FavoriteRecipesSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = FavoriteRecipes
+        model = Favorite
         fields = ('user', 'recipe',)
 
     def validate(self, data):
@@ -264,7 +264,7 @@ class FavoriteRecipesSerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Cart
+        model = ShoppingCart
         fields = ('user', 'recipe',)
 
     def validate(self, data):

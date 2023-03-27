@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Cart, FavoriteRecipes, Ingredient, Recipe, Tag
+from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 
 
 class TagAdmin(admin.ModelAdmin):
@@ -21,6 +21,7 @@ class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+@admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'author', 'name', 'cooking_time', 'get_favorites', 'get_ingredients',
@@ -30,7 +31,7 @@ class RecipeAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
     def get_favorites(self, obj):
-        return obj.favorite.count()
+        return obj.favorites.count()
     get_favorites.short_description = 'Избранные рецепты'
 
     def get_ingredients(self, obj):
@@ -40,22 +41,21 @@ class RecipeAdmin(admin.ModelAdmin):
     get_ingredients.short_description = 'Ингредиенты'
 
 
-class FavoriteRecipesAdmin(admin.ModelAdmin):
+class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
     list_filter = ('user', 'recipe')
     search_fields = ('user', 'recipe')
     empty_value_display = '-пусто-'
 
 
-class CartAdmin(admin.ModelAdmin):
+class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'user')
     list_filter = ('recipe', 'user')
     search_fields = ('user', )
     empty_value_display = '-пусто-'
 
 
-admin.site.register(Tag, TagAdmin)
+admin.site.register(ShoppingCart, ShoppingCartAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(FavoriteRecipes, FavoriteRecipesAdmin)
-admin.site.register(Cart, CartAdmin)
+admin.site.register(Tag, TagAdmin)
+admin.site.register(Favorite, FavoriteAdmin)

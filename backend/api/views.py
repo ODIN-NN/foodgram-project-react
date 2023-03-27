@@ -12,11 +12,11 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 
 from recipes.models import (
-    Cart,
-    FavoriteRecipes,
+    Favorite,
     Ingredient,
-    QuantityIngredient,
+    IngredientRecipe,
     Recipe,
+    ShoppingCart,
     Tag,
 )
 from users.models import Follow, User
@@ -79,7 +79,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def download_shopping_cart(self, request):
-        ingredients = QuantityIngredient.objects.filter(
+        ingredients = IngredientRecipe.objects.filter(
             recipe__shopping_list__user=request.user
         ).order_by('ingredient__name').values(
             'ingredient__name', 'ingredient__measurement_unit'
@@ -105,7 +105,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @shopping_cart.mapping.delete
     def destroy_shopping_cart(self, request, pk):
         get_object_or_404(
-            Cart,
+            ShoppingCart,
             user=request.user.id,
             recipe=get_object_or_404(Recipe, id=pk)
         ).delete()
@@ -130,7 +130,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @favorite.mapping.delete
     def destroy_favorite(self, request, pk):
         get_object_or_404(
-            FavoriteRecipes,
+            Favorite,
             user=request.user,
             recipe=get_object_or_404(Recipe, id=pk)
         ).delete()
