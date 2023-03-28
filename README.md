@@ -28,34 +28,47 @@ http://62.84.117.39/api/docs/
 
 ### Запуск приложения
 
-Из директории infra/ (через консоль bash), выполните команду для запуска приложения:
+В директории infra/ создаём файл .env и наполняем его следующими данными:
 
 ```
-docker-compose up --build
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=postgres
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+DB_HOST=db
+DB_PORT=5432
+```
+
+Из директории infra/ (через консоль bash), выполняем команду для запуска приложения:
+
+```
+sudo docker-compose up -d
 ```
 
 Далее смотрим список контейнеров и узнаём id необходимого контейнера:
 
 ```
-docker container ls
+sudo docker container ls
 ```
 
 В списке контейнеров находим контейнер, со строчкой включающей в себя слово "backend" в столбце "IMAGE"
 
-Заходим в нужный контейнер с помощью команды:
+Запускаем консоль в нужном контейнере с помощью команды:
 
 ```
-docker exec -it <CONTAINER ID> sh
+sudo docker exec -it <CONTAINER ID> bash
 ```
 
 Выполняем миграцию базы данных, сбор статики, загрузку начальных данных:
 
 ```
+python manage.py makemigrations
+
 python manage.py migrate
 
 python manage.py collectstatic
 
-python manage.py upload_csv
+python manage.py upload_info
 ```
 
 
