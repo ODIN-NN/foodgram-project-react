@@ -137,7 +137,6 @@ class FavoriteShoppingCart(models.Model):
 
 
 class Favorite(FavoriteShoppingCart):
-
     class Meta(FavoriteShoppingCart.Meta):
         default_related_name = 'favorites'
         verbose_name = 'Избранное'
@@ -151,7 +150,6 @@ class Favorite(FavoriteShoppingCart):
 
 
 class ShoppingCart(FavoriteShoppingCart):
-
     class Meta(FavoriteShoppingCart.Meta):
         default_related_name = 'shopping_list'
         verbose_name = 'Корзина'
@@ -165,7 +163,6 @@ class ShoppingCart(FavoriteShoppingCart):
 
 
 class IngredientRecipe(models.Model):
-
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
