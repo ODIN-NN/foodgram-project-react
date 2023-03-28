@@ -6,10 +6,10 @@ from recipes.models import Ingredient, Tag
 
 
 class Command(BaseCommand):
-    help = ' Загрузка ингредиентов '
+    help = ' Load ingredients and tags. '
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.WARNING('Старт загрузки'))
+        self.stdout.write(self.style.WARNING('Start load data.'))
         with open('data/ingredients.json', encoding='utf-8',
                   ) as data_file_ingredients:
             ingredient_data = json.loads(data_file_ingredients.read())
@@ -22,4 +22,4 @@ class Command(BaseCommand):
             for tags in tags_data:
                 Tag.objects.get_or_create(**tags)
 
-        self.stdout.write(self.style.SUCCESS('Ингредиенты загружены'))
+        self.stdout.write(self.style.SUCCESS('Data loaded.'))
