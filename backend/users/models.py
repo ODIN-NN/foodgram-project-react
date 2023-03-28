@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+from django.db.models import F, Q
 
 
 class User(AbstractUser):
@@ -62,7 +63,7 @@ class Follow(models.Model):
                 name='unique_follow'
             ),
             models.CheckConstraint(
-                check=models.Q(user=models.F('author')),
+                check=~Q(user=F('author')),
                 name='self_follow_forbid'
             )
         )

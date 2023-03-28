@@ -50,7 +50,7 @@ class SubscribeListSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         fields = (
             'email', 'id', 'username', 'first_name',
-            'last_name', 'subscribe', 'recipes_count', 'recipes',
+            'last_name', 'is_subscribed', 'recipes_count', 'recipes',
         )
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
